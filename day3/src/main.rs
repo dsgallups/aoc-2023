@@ -138,14 +138,7 @@ fn get_gear_ratio_sum(input: &str) -> u64 {
     let numbers = get_numbers(&map);
     let gear_locations = get_gear_locations(&map);
 
-    println!(
-        "numbers:\n{:?}\ngear_locations:\n{:?}",
-        numbers, gear_locations
-    );
-
     let valid_gear_ratios = get_valid_gears(gear_locations, numbers, &map);
-
-    println!("valid_gear_ratios: \n{:#?}", valid_gear_ratios);
 
     valid_gear_ratios.into_iter().sum()
 }
@@ -224,18 +217,18 @@ fn get_valid_gears(
                 number_loc.loc.1 - 1
             };
 
-            if (gear_loc.0 - 1..=gear_loc.0 + 1).contains(&number_loc.loc.0)
-                && (num_char_start..=num_char_start + number_loc.len + 1).contains(&gear_loc.1)
+            let gear_loc_start = if gear_loc.0 == 0 { 0 } else { gear_loc.0 - 1 };
+
+            if (gear_loc_start..=gear_loc.0 + 1).contains(&number_loc.loc.0)
+                && (num_char_start..=number_loc.loc.1 + number_loc.len).contains(&gear_loc.1)
             {
                 adj_nos.push(number_loc.clone())
             }
         }
 
-        println!("==============\n{}:", i);
-
-        adj_nos.iter().for_each(|v| println!("{:?}", v));
-
         if adj_nos.len() == 2 {
+            println!("==============\n{}:", i);
+            adj_nos.iter().for_each(|v| println!("{:?}", v));
             let ratio = adj_nos
                 .into_iter()
                 .fold(1, |acc, val| acc * val.value as u64);
