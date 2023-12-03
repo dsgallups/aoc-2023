@@ -47,8 +47,8 @@ fn run_p2_tests() {
         //("./day3/src/tests_p2/2.txt", 0),
         //("./day3/src/tests_p2/3.txt", 467835),
         //("./day3/src/tests_p2/4.txt", 467835),
-        ("./day3/src/tests_p2/5.txt", 1313544),
-        //("./day3/src/input.txt", 0),
+        //("./day3/src/tests_p2/5.txt", 1313544),
+        ("./day3/src/tests_p2/6.txt", 32),
     ];
     for test in tests {
         println!("=====================new test=================");
