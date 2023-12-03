@@ -135,25 +135,26 @@ fn get_gear_ratio_sum(input: &str) -> u64 {
         .map(|line| line.trim().chars().collect::<Vec<char>>())
         .collect::<Vec<_>>();
 
-    let numbers = get_numbers(&map);
-    let gear_locations = get_gear_locations(&map);
-
-    let valid_gear_ratios = get_valid_gears(gear_locations, numbers, &map);
+    let valid_gear_ratios = new_get_valid_gears(&map);
 
     valid_gear_ratios.into_iter().sum()
 }
 
-fn get_numbers(map: &[Vec<char>]) -> Vec<NumberLocation> {
-    let mut numbers = Vec::new();
+fn new_get_valid_gears(map: &[Vec<char>]) -> Vec<u64> {
+    let mut number_locs = Vec::new();
+    let mut gear_locs = Vec::new();
 
-    for (line_no, line) in map.iter().enumerate() {
+    map.iter().enumerate().for_each(|(line_no, line)| {
         let mut numstr_start = (line_no, 0);
         let mut numstr = String::new();
 
-        for (char_i, char) in line.iter().enumerate() {
+        line.iter().enumerate().for_each(|(char_i, char)| {
+            if char.eq(&'*') {
+                gear_locs.push((line_no, char_i));
+            }
             if !char.is_ascii_digit() {
                 if !numstr.is_empty() {
-                    numbers.push(NumberLocation {
+                    number_locs.push(NumberLocation {
                         value: numstr.parse().unwrap(),
                         loc: numstr_start,
                         len: numstr.len(),
@@ -163,7 +164,7 @@ fn get_numbers(map: &[Vec<char>]) -> Vec<NumberLocation> {
                     numstr_start = (line_no, 0);
                 }
 
-                continue;
+                return;
             }
 
             if numstr.is_empty() {
@@ -173,70 +174,44 @@ fn get_numbers(map: &[Vec<char>]) -> Vec<NumberLocation> {
             numstr.push(*char);
 
             if (char_i == line.len() - 1) && !numstr.is_empty() {
-                numbers.push(NumberLocation {
+                number_locs.push(NumberLocation {
                     value: numstr.parse().unwrap(),
                     loc: numstr_start,
                     len: numstr.len(),
                 });
             }
-        }
-    }
+        });
+    });
 
-    numbers
-}
+    gear_locs
+        .into_iter()
+        .filter_map(|gear_loc| {
+            let adj_nos: Vec<NumberLocation> = number_locs
+                .iter()
+                .filter_map(|number_loc| {
+                    let num_char_start = number_loc.loc.1.max(1) - 1;
+                    let gear_loc_start = gear_loc.0.max(1) - 1;
 
-fn get_gear_locations(map: &[Vec<char>]) -> Vec<(usize, usize)> {
-    let mut locations = Vec::new();
-
-    for (line_no, line) in map.iter().enumerate() {
-        for (char_i, char) in line.iter().enumerate() {
-            if char.eq(&'*') {
-                locations.push((line_no, char_i));
+                    if (gear_loc_start..=gear_loc.0 + 1).contains(&number_loc.loc.0)
+                        && (num_char_start..=number_loc.loc.1 + number_loc.len)
+                            .contains(&gear_loc.1)
+                    {
+                        return Some(number_loc.clone());
+                    }
+                    None
+                })
+                .collect();
+            if adj_nos.len() != 2 {
+                return None;
             }
-        }
-    }
 
-    locations
-}
-
-fn get_valid_gears(
-    gear_locs: Vec<(usize, usize)>,
-    number_locs: Vec<NumberLocation>,
-    _map: &[Vec<char>],
-) -> Vec<u64> {
-    let mut ratios = Vec::new();
-
-    //(line, char)
-    for (i, gear_loc) in gear_locs.iter().enumerate() {
-        let mut adj_nos: Vec<NumberLocation> = Vec::new();
-
-        for number_loc in number_locs.iter() {
-            let num_char_start = if number_loc.loc.1 == 0 {
-                0
-            } else {
-                number_loc.loc.1 - 1
-            };
-
-            let gear_loc_start = if gear_loc.0 == 0 { 0 } else { gear_loc.0 - 1 };
-
-            if (gear_loc_start..=gear_loc.0 + 1).contains(&number_loc.loc.0)
-                && (num_char_start..=number_loc.loc.1 + number_loc.len).contains(&gear_loc.1)
-            {
-                adj_nos.push(number_loc.clone())
-            }
-        }
-
-        if adj_nos.len() == 2 {
-            println!("==============\n{}:", i);
-            adj_nos.iter().for_each(|v| println!("{:?}", v));
-            let ratio = adj_nos
-                .into_iter()
-                .fold(1, |acc, val| acc * val.value as u64);
-            ratios.push(ratio);
-        }
-    }
-
-    ratios
+            Some(
+                adj_nos
+                    .into_iter()
+                    .fold(1, |acc, val| acc * val.value as u64),
+            )
+        })
+        .collect()
 }
 
 #[derive(Debug, Clone)]
