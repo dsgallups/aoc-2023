@@ -1,5 +1,5 @@
 fn main() {
-    let input = include_str!("./input.txt");
+    let input = include_str!("./input2.txt");
 
     let p1_res = get_parts(input);
 
@@ -43,12 +43,13 @@ fn run_p1_tests() {
 #[test]
 fn run_p2_tests() {
     let tests = vec![
-        //("./day3/src/tests_p2/1.txt", 467835),
-        //("./day3/src/tests_p2/2.txt", 0),
-        //("./day3/src/tests_p2/3.txt", 467835),
-        //("./day3/src/tests_p2/4.txt", 467835),
-        //("./day3/src/tests_p2/5.txt", 1313544),
+        ("./day3/src/tests_p2/1.txt", 467835),
+        ("./day3/src/tests_p2/2.txt", 0),
+        ("./day3/src/tests_p2/3.txt", 467835),
+        ("./day3/src/tests_p2/4.txt", 467835),
+        ("./day3/src/tests_p2/5.txt", 1313544),
         ("./day3/src/tests_p2/6.txt", 32),
+        ("./day3/src/tests_p2/7.txt", 22 * 22 * 25),
     ];
     for test in tests {
         println!("=====================new test=================");
@@ -137,7 +138,6 @@ fn get_gear_ratio_sum(input: &str) -> u64 {
     let numbers = get_numbers(&map);
     let gear_locations = get_gear_locations(&map);
 
-    #[cfg(test)]
     println!(
         "numbers:\n{:?}\ngear_locations:\n{:?}",
         numbers, gear_locations
@@ -145,7 +145,6 @@ fn get_gear_ratio_sum(input: &str) -> u64 {
 
     let valid_gear_ratios = get_valid_gears(gear_locations, numbers, &map);
 
-    #[cfg(test)]
     println!("valid_gear_ratios: \n{:#?}", valid_gear_ratios);
 
     valid_gear_ratios.into_iter().sum()
@@ -231,9 +230,9 @@ fn get_valid_gears(
                 adj_nos.push(number_loc.clone())
             }
         }
-        #[cfg(test)]
+
         println!("==============\n{}:", i);
-        #[cfg(test)]
+
         adj_nos.iter().for_each(|v| println!("{:?}", v));
 
         if adj_nos.len() == 2 {
