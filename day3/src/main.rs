@@ -1,5 +1,5 @@
 fn main() {
-    let input = include_str!("./input2.txt");
+    let input = include_str!("./input.txt");
 
     let p1_res = get_parts(input);
 
