@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 fn main() {
     let input = include_str!("./input.txt");
-    //pt_one(input);
+    pt_one(input);
     pt_two(input)
 }
 fn pt_one(input: &str) {
@@ -21,7 +21,6 @@ fn pt_one(input: &str) {
             .filter_map(|s| s.trim().parse::<u32>().ok())
             .collect::<Vec<u32>>();
 
-        println!("{:?}, {:?}", card_nos, draw_nos);
         let mut amt = 0;
 
         for card_no in card_nos {
@@ -34,7 +33,6 @@ fn pt_one(input: &str) {
             }
         }
         total += amt;
-        println!("{}", amt);
     }
     println!("total: {}", total);
 }
