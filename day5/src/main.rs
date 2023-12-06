@@ -1,6 +1,6 @@
 fn main() {
     let input = include_str!("./input.txt");
-    //p1(input);
+    p1(input);
     p2(input);
 }
 
@@ -86,81 +86,13 @@ fn p2(input: &str) {
         .map(|v| v.parse::<i128>().unwrap())
         .collect::<Vec<i128>>();
 
-    println!("{}", og_seeds.len() / 2);
     let og_seeds = (0..og_seeds.len() / 2)
-        .map(|i| {
-            println!("i = {}", i);
-            Range::new(og_seeds[i * 2], og_seeds[(i * 2) + 1])
-        })
+        .map(|i| Range::new(og_seeds[i * 2], og_seeds[(i * 2) + 1]))
         .collect::<Vec<Range>>();
 
     let mut seeds = og_seeds.clone();
 
-    println!("{:?}\n\nbegin looping:\n", seeds);
-
-    //lines.for_each(|v| println!("{}", v));
-
-    let mut min = i128::MAX;
-
-    for seed in seeds {
-        let mut lines = input
-            .split('\n')
-            .map(|l| l.trim().to_string())
-            .collect::<Vec<String>>()
-            .into_iter()
-            .peekable();
-        let mut ranges: Vec<Range> = vec![seed];
-
-        loop {
-            //println!("loop start");
-            let line_clone = &mut lines;
-
-            let mut maps = line_clone
-                .skip_while(|line| !line.contains("map"))
-                .skip(1)
-                .take_while(|line| !line.is_empty())
-                .map(|map_line| {
-                    let vals = map_line
-                        .split(' ')
-                        .map(|v| v.parse::<i128>().unwrap())
-                        .collect::<Vec<i128>>();
-                    let destination = vals[0];
-                    let source = vals[1];
-                    let len = vals[2];
-                    (Range::new(source, len), destination)
-                })
-                .collect::<Vec<(Range, i128)>>();
-
-            maps.sort_by(|a, b| a.0.start.cmp(&b.0.start));
-
-            ranges = ranges.into_iter().fold(Vec::new(), |mut acc, seed| {
-                //println!("---------this seed: {:?}", seed);
-                let mut new_ranges = seed.map(&maps);
-                //println!("---------new ranges for seed; {:?}", new_ranges);
-
-                acc.append(&mut new_ranges);
-                acc
-            });
-
-            //println!("results:\n{:?}", something);
-
-            if line_clone.peek().is_none() {
-                break;
-            }
-        }
-        println!(
-            "results for range: \n{:?}\nloop end\n=============================\n",
-            ranges
-        );
-
-        for range in ranges {
-            min = min.min(range.start);
-        }
-    }
-    println!("min = {}", min);
-    /*
     loop {
-        println!("loop start");
         let line_clone = &mut lines;
 
         let mut maps = line_clone
@@ -182,43 +114,22 @@ fn p2(input: &str) {
         maps.sort_by(|a, b| a.0.start.cmp(&b.0.start));
 
         seeds = seeds.into_iter().fold(Vec::new(), |mut acc, seed| {
-            println!("---------this seed: {:?}", seed);
             let mut new_ranges = seed.map(&maps);
-            println!("---------new ranges for seed; {:?}", new_ranges);
-
             acc.append(&mut new_ranges);
             acc
         });
 
-        //println!("results:\n{:?}", something);
-
-        println!(
-            "results for map: \n{:?}\nloop end\n=============================\n",
-            seeds
-        );
         if line_clone.peek().is_none() {
             break;
         }
     }
-    */
-    //println!("seeds: ");
-    //println!("{:?}", seeds);
 
-    /*let mut final_count = 0;
-    let mut min = i128::MAX;
-    for seed in seeds {
-        min = min.min(seed.start);
-        final_count += seed.len;
-    }
+    println!("seeds: ");
+    println!("{:?}", seeds);
 
-    let mut og_count = 0;
-    for seed in og_seeds {
-        og_count += seed.len;
-    }
+    let min = seeds.into_iter().fold(i128::MAX, |dec, v| dec.min(v.start));
 
     println!("min = {}", min);
-    println!("og count = {}", og_count);
-    println!("final count = {}", final_count);*/
 }
 
 #[derive(Debug, Clone)]
@@ -239,37 +150,24 @@ impl Range {
 
         for (range, map) in map_ranges {
             if cursor > self.start + self.len - 1 {
-                //println!("bout to BREAAKAKk");
                 break;
             }
 
-            // println!("cursor at {}", cursor);
-
-            /*println!(
-                "range: (start = {}, len = {}, map = {})",
-                range.start, range.len, map
-            );*/
-
             if range.start + range.len - 1 < cursor {
-                //println!("skipping!\n");
                 continue;
             }
 
             if range.start > cursor && range.start < self.start + self.len {
-                //println!("--range.start > cursor--");
                 let end = range.start;
 
                 let new_range_len = end - cursor;
 
                 let new_range = Range::new(cursor, new_range_len);
-                //println!("pushing: {:?}", new_range);
                 res.push(new_range);
                 cursor += new_range_len;
-                //println!("cursor at {} ", cursor);
             }
 
             if (range.start..range.start + range.len).contains(&cursor) {
-                //println!("--mapping to this range--");
                 let end = if range.start + range.len > self.start + self.len {
                     self.start + self.len
                 } else {
@@ -278,18 +176,11 @@ impl Range {
                 let new_range_len = end - cursor;
 
                 let map_diff = *map - range.start;
-                //println!("map diff: {}", map_diff);
 
                 let new_range = Range::new(cursor + map_diff, new_range_len);
-                //println!("pushing: {:?}", new_range);
                 res.push(new_range);
                 cursor += new_range_len;
-                println!("cursor now at {}", cursor);
             }
-            /*println!(
-                "cur mapped ranges for single range:\n{:?}\nend calculation for this map_range\n",
-                res
-            );*/
         }
 
         if cursor < self.start + self.len {
@@ -298,8 +189,6 @@ impl Range {
             let new_range = Range::new(cursor, new_range_len);
             res.push(new_range);
         }
-
-        //println!("leaving map for range\n");
 
         res
     }
