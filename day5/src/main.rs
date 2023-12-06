@@ -5,14 +5,12 @@ fn main() {
 }
 
 fn p1(input: &str) {
-    let lines = input
+    let mut lines = input
         .split('\n')
         .map(|l| l.trim().to_string())
         .collect::<Vec<String>>()
         .into_iter()
         .peekable();
-
-    let mut lines = lines.into_iter();
 
     let og_seeds = lines
         .next()
@@ -69,14 +67,12 @@ fn p1(input: &str) {
 }
 
 fn p2(input: &str) {
-    let lines = input
+    let mut lines = input
         .split('\n')
         .map(|l| l.trim().to_string())
         .collect::<Vec<String>>()
         .into_iter()
         .peekable();
-
-    let mut lines = lines.into_iter();
 
     let og_seeds = lines
         .next()
@@ -125,10 +121,23 @@ fn p2(input: &str) {
     }
 
     println!("seeds: ");
-    println!("{:?}", seeds);
+    seeds.sort_by(|a, b| a.start.cmp(&b.start));
 
+    let mut overlaps = 0;
+
+    seeds.windows(2).for_each(|window| {
+        let seed_one = &window[0];
+        let seed_two = &window[1];
+        if seed_one.start + seed_one.len < seed_two.start {
+            println!(
+                "({}, {}) => ({})",
+                seed_one.start, seed_one.len, seed_two.start
+            );
+            overlaps += 1;
+        }
+    });
+    println!("overlaps: {}", overlaps);
     let min = seeds.into_iter().fold(i128::MAX, |dec, v| dec.min(v.start));
-
     println!("min = {}", min);
 }
 
