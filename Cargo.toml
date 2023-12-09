@@ -4,7 +4,17 @@ version = "0.1.0"
 edition = "2021"
 
 [workspace]
-members = ["day1", "day2", "day3", "day4", "day5", "day6", "day7", "helpers"]
+members = [
+    "day1",
+    "day2",
+    "day3",
+    "day4",
+    "day5",
+    "day6",
+    "day7",
+    "day8",
+    "helpers",
+]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -35,5 +45,9 @@ path = "day6/src/main.rs"
 [[bin]]
 name = "day7"
 path = "day7/src/main.rs"
+
+[[bin]]
+name = "day8"
+path = "day8/src/main.rs"
 
 [dependencies]
