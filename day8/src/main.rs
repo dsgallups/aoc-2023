@@ -1,3 +1,4 @@
+use num::integer::lcm;
 use std::collections::HashMap;
 
 fn main() {
@@ -78,7 +79,7 @@ fn pt2() {
         let (v1, v2) = v.split_once(", ").unwrap();
 
         if k.ends_with('A') {
-            locs.push(k.to_string());
+            locs.push((k.to_string(), 0, false));
         }
 
         map.insert(k.to_string(), (v1.to_string(), v2.to_string()));
@@ -90,8 +91,12 @@ fn pt2() {
     let mut path = og_path.clone();
     loop {
         let mut cont = false;
-        for loc in locs.iter() {
-            if !loc.ends_with('Z') {
+        for loc in locs.iter_mut() {
+            if !loc.2 && loc.0.ends_with('Z') {
+                loc.2 = true;
+            }
+
+            if !loc.2 {
                 cont = true;
             }
         }
@@ -108,13 +113,19 @@ fn pt2() {
         };
 
         for loc in locs.iter_mut() {
-            let val = map.get(loc).unwrap();
+            if loc.2 {
+                continue;
+            }
+
+            let val = map.get(&loc.0).unwrap();
             match direction {
                 'L' => {
-                    *loc = val.0.clone();
+                    loc.0 = val.0.clone();
+                    loc.1 += 1;
                 }
                 'R' => {
-                    *loc = val.1.clone();
+                    loc.0 = val.1.clone();
+                    loc.1 += 1;
                 }
                 _ => panic!("invalid direction"),
             }
@@ -122,6 +133,20 @@ fn pt2() {
         //println!("{:?}", locs);
         count += 1;
     }
+
+    println!("res: {:?}", locs);
+
+    let mut fin: i128 = 1;
+
+    let mut low = locs[0].1;
+
+    for loc in locs {
+        fin *= loc.1;
+        low = lcm(low, loc.1);
+    }
+
+    println!("fin = {}", fin);
+    println!("low = {}", low);
 
     println!("count = {}", count);
 }

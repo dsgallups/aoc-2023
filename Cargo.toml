@@ -51,3 +51,4 @@ name = "day8"
 path = "day8/src/main.rs"
 
 [dependencies]
+num = "0.4.1"
