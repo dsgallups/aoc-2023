@@ -45,10 +45,7 @@ fn pt2(input: &str) {
         total += all_differences
             .into_iter()
             .rev()
-            .fold(0, |mut acc, diff_line| {
-                acc = *diff_line.first().unwrap() - acc;
-                acc
-            });
+            .fold(0, |acc, diff_line| *diff_line.first().unwrap() - acc);
     }
     println!("total = {}", total);
 }
@@ -94,10 +91,7 @@ fn pt1(input: &str) {
         total += all_differences
             .into_iter()
             .rev()
-            .fold(0, |mut acc, diff_line| {
-                acc += *diff_line.last().unwrap();
-                acc
-            });
+            .fold(0, |acc, diff_line| acc + *diff_line.last().unwrap());
     }
     println!("total = {}", total);
 }
