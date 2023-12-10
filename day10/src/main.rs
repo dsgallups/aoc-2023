@@ -1,10 +1,7 @@
 const STARTING_CHAR: char = 'J';
 const STARTING_DIR: Direction = Right;
 
-const LEFT_MATCHERS: [char; 2] = ['F', 'L'];
-const RIGHT_MATCHERS: [char; 2] = ['J', '7'];
-
-#[derive(Clone, Copy, PartialEq, Debug)]
+#[derive(Clone, Copy)]
 enum Direction {
     Up,
     Down,
@@ -117,11 +114,9 @@ fn pt2(input: &str) {
 
                     if let Some(ref aleft_matcher) = left_matcher {
                         if aleft_matcher == &'F' && cur_char == '7' {
-                            left_matcher = None;
                             continue;
                         }
                         if aleft_matcher == &'L' && cur_char == 'J' {
-                            left_matcher = None;
                             continue;
                         }
                     }
@@ -175,10 +170,6 @@ fn pt1(input: &str) {
             cur_char = STARTING_CHAR;
         }
 
-        println!(
-            "cur_char = {}, prev_char_direction = {:?}",
-            cur_char, prev_char_direction
-        );
         prev_char_direction = match (cur_char, prev_char_direction) {
             ('|', Down) => Down,
             ('|', Up) => Up,
